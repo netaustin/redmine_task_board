@@ -46,7 +46,7 @@
     sections.push(el);
   });
   sections.each(function(el) {
-    new TaskBoardPane(el.id, {constraint: false, containment: sections, scroll: true, dropOnEmpty: true, only: 'card'});
+    new TaskBoardPane(el.id, {constraint: false, containment: sections, scroll: window, dropOnEmpty: true, only: 'card'});
   });
   TaskBoardUtils.checkboxListener();
   // Sortable.create('sortable-root', {tree: true, dropOnEmpty: true, constraint: false, overlap: 'vertical'});
