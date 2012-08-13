@@ -22,6 +22,7 @@
 .taskboard-pane h2 {
   font-size: 18px;
   text-align: center;
+  background-color: transparent;
 }
 
 .taskboard-pane ul {
