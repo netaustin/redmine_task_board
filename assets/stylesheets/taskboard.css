@@ -1,0 +1,118 @@
+.taskboard-wrapper {
+  width: 100%;
+  overflow: auto;
+}
+
+.taskboard-pane {
+  float: left;
+  width: 250px;
+  margin: 0 4px;
+}
+
+.taskboard-pane h2, .taskboard-pane h3 {
+  border: none;
+}
+
+.taskboard-pane h3.status {
+  color: #666;
+  font-size: 14px;
+  border-bottom: solid 1px #666;
+}
+
+.taskboard-pane h2 {
+  font-size: 18px;
+  text-align: center;
+}
+
+.taskboard-pane ul {
+  border: solid 3px #eee;
+  list-style-type: none;
+  margin: 0 0 10px 0;
+  padding: 6px 6px 0 6px;
+  min-height: 50px;
+}
+
+.taskboard-pane ul.empty {
+  border: dashed 3px #eee;
+  background: #fff;
+}
+
+.taskboard-pane ul li.card {
+  list-style-type: none;
+  margin: 0 0 6px 0;
+  padding: 0;
+}
+
+.taskboard-pane ul li.card.over-limit div.issue {
+  color: #aaa;
+  background: #ddd;
+}
+
+.taskboard-pane ul li.card.bug div.issue {
+  border: solid 1px #D8000C;
+  border-top-width: 3px;
+}
+
+.taskboard-pane ul li.card.feature div.issue {
+  border: solid 1px #4F8A10;
+  border-top-width: 3px;
+}
+
+.taskboard-pane ul li.card.support div.issue {
+  border: solid 1px #00529B;
+  border-top-width: 3px;
+}
+
+.taskboard-pane ul li.card.over-limit div.issue h3 a {
+  color: #aaa;
+}
+
+.taskboard-pane ul li.card div.issue {
+  padding: 3px;
+}
+
+.taskboard-pane ul li.card div.issue:hover {
+  cursor: pointer;
+}
+
+.taskboard-pane ul li.card div.issue p.meta {
+  font-size: 11px;
+  margin: 0;
+  padding: 0;
+}
+
+.taskboard-pane ul li.card div.issue div.issue-heading {
+  overflow: auto;
+  margin-bottom: 3px;
+}
+
+.taskboard-pane ul li.card div.issue div.issue-heading p.issue-number {
+  float: left;
+}
+
+.taskboard-pane ul li.card div.issue h3 {
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.taskboard-pane ul li.card div.issue h3 a {
+  color: #000;
+}
+
+.taskboard-pane ul li.card div.issue h3 a:hover {
+  color: #000;
+  text-decoration: none;
+  border-bottom: none;
+}
+
+#main.nosidebar #content {
+  position: relative;
+}
+
+#taskboard-buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: #ccc;
+  padding: 3px;
+}

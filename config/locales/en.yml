@@ -1,0 +1,17 @@
+# English strings go here for Rails i18n
+en:
+  label_task_board: Task Board
+  task_board_help: You must create columns for your task board. Each column can represent multiple issue statuses.
+  task_board_column_title: Column Title
+  task_board_create_column: Create Column
+  label_task_board_application_error: Unexpected application error
+  task_board_statuses: Statuses
+  task_board_columns: Columns
+  task_board_not_shown: Not Shown
+  task_board_visible_columns: Visible Columns
+  task_board_task_limit: Max Tasks
+  task_board_save_changes: Save Changes
+  task_board_issue_archived: This issue is archived from the task board view and will not display.
+  task_board_issue_unarchive: Unarchive Issue
+  task_board_issue_bulk_archive: Archive Selected Issues
+  task_board_issue_bulk_edit: Edit Selected Issues

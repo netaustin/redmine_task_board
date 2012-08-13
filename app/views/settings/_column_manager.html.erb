@@ -1,0 +1,64 @@
+<%= form_tag project_taskboard_columns_create_path(:project_id => @project.id), :remote => true, :id => 'create-column' do %>
+  <p>
+    <%= label_tag(:title, translate(:task_board_column_title)) %>
+    <%= text_field_tag(:title) %>
+    <%= submit_tag(translate :task_board_create_column) %>
+  </p>
+<% end %>
+
+<%= form_tag project_taskboard_columns_update_path(:project_id => @project.id), :method => 'put', :remote => true do %>
+  <ul class="cant-move">
+    <li class="head"><p class="cell"><%= translate :task_board_statuses %></p></li>
+    <% statuses.each do |issue_status| %>
+      <li><%= issue_status.name %></li>
+    <% end %>
+  </ul>
+
+  <ul class="cant-move">
+    <li class="head"><p class="cell"><%= translate :task_board_not_shown %></p></li>
+    <% statuses.each do |issue_status| %>
+      <li class="has-radio">
+        <%= radio_button_tag("status[#{issue_status.id}]", 0, TaskBoardColumn.empty_status(issue_status.id)) %>
+      </li>
+    <% end %>
+  </ul>
+
+  <div class="movable-columns" id="taskboard-columns">
+    <h4><%= translate :task_board_visible_columns %></h4>
+    <% columns.each do |column| %>
+      <ul>
+        <li class="head"><p class="cell"><%= column.title %></p></li>
+        <% statuses.each do |issue_status| %>
+          <li class="has-radio">
+            <%= radio_button_tag("status[#{issue_status.id}]", column.id, column.issue_status_ids.include?(issue_status.id)) %>
+           </li>
+        <% end %>
+        <li><%= link_to(
+                  l(:button_delete),
+                  project_taskboard_columns_delete_path(:project_id => @project.id, :column_id => column.id),
+                  :method => :delete,
+                  :confirm => l(:text_are_you_sure),
+                  :remote => true,
+                  :class => 'icon icon-del'
+                )
+            %>
+        </li>
+        <li class="column-options">
+          <p class="cell">
+            <%= label_tag("column[#{column.id}][max_issues]", translate(:task_board_task_limit)) %>
+            <%= text_field_tag("column[#{column.id}][max_issues]", column.max_issues, :class => 'column-max-issues') %>
+            <%= hidden_field_tag("column[#{column.id}][weight]", column.weight, :class => 'column-weight') %>
+          </p>
+        </li>
+      </ul>
+    <% end %>
+  </div>
+
+  <div class="form-save">
+    <%= submit_tag(translate :task_board_save_changes) %>
+  </div>
+
+  <script type="text/javascript">
+    var taskboard_settings = new TaskBoardSettings('taskboard-columns', {constraint: false, tag: 'ul', handle: 'head', weightSelector: '.column-options .column-weight', overlap: 'horizontal'});
+  </script>
+<% end %>

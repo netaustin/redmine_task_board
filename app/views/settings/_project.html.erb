@@ -1,0 +1,28 @@
+<%= javascript_include_tag('task_board', :plugin => 'redmine_task_board') %>
+
+<style>
+#column_manager { overflow: auto }
+#column_manager ul { float: left; width: 110px; overflow: hidden; list-style-type: none; padding: 5px 0; margin: 0 3px 0 0; }
+#column_manager div.movable-columns { float: left; }
+#column_manager div.movable-columns h4 { text-align: center; height: 15px; padding: 5px 0; margin: 0 0 5px 0; font-size: 15px; }
+#column_manager div.movable-columns ul { background: #ffd; }
+#column_manager div.movable-columns ul li.head { cursor: move; }
+#column_manager ul li { height: 22px; padding: 2px 4px 0 4px; width: 102px; text-align: center; }
+#column_manager ul li p.cell { display: table-cell; vertical-align: middle; height: 24px; text-align: center; width: 102px; padding: 0; margin: 0; }
+#column_manager ul li.head, #column_manager ul li.head p.cell { font-weight: bold; height: 60px; }
+#column_manager ul li:nth-child(even) { background: #ededed; }
+#column_manager ul li.column-options .column-max-issues { font-size: 11px; width: 22px; padding: 0; text-align: center; }
+#column_manager div.movable-columns ul li:nth-child(even) { background: #ff9; }
+#column_manager ul.cant-move { margin-top: 30px; }
+#column_manager div.form-save { clear: left; padding-top: 15px; }
+</style>
+
+<%= translate :task_board_help %>
+
+<div id="column_manager">
+  <%= render :partial => 'settings/column_manager', :locals => {
+        :columns => TaskBoardColumn.find_all_by_project_id(@project.id, :order => "weight ASC"),
+        :statuses => IssueStatus.all
+      }
+  %>
+</div>

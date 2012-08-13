@@ -1,0 +1,27 @@
+<% if tbi = TaskBoardIssue.find_by_issue_id(@issue.id) and tbi.is_archived? then %>
+  <div id="taskboard-issue">
+    <hr>
+    <p><strong><%= translate :label_task_board %></strong></p>
+    <p>
+      <%= translate :task_board_issue_archived %>
+      <input type="button" id="taskboard-unarchive" value="<%= translate :task_board_issue_unarchive %>" />
+    </p>
+  </div>
+
+  <script type="text/javascript">
+    $('taskboard-unarchive').observe('click', function() {
+      new Ajax.Request('/issues/<%= @issue.id %>/taskboard-unarchive', {
+        method: 'post',
+        onLoading: function() {
+          $('ajax-indicator').show();
+        },
+        onComplete: function() {
+          $('ajax-indicator').hide();
+        },
+        onSuccess: function() {
+          $('taskboard-issue').remove();
+        }
+      });
+    });
+  </script>
+<% end %>

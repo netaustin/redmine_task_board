@@ -1,0 +1,57 @@
+<%= javascript_include_tag('task_board', :plugin => 'redmine_task_board') %>
+
+<div id="taskboard-buttons">
+  <input type="button" id="edit-issues" value="<%= translate :task_board_issue_bulk_edit %>" />
+  <input type="button" id="archive-issues" value="<%= translate :task_board_issue_bulk_archive %>" />
+</div>
+
+<div class="taskboard-wrapper" id="sortable-root">
+  <% @columns.each do|column| %>
+    <div class="taskboard-pane">
+      <h2><%= column.title %></h2>
+      <% column.issues.each do |status_id, issues| %>
+        <% unless column.issues.size == 1 %>
+          <h3 class="status"><%= @status_names[status_id] %></h3>
+        <% end %>
+        <ul data-status-id="<%= status_id %>" data-max-issues="<%= column.max_issues %>" id="column_<%= status_id %>"<% if issues.empty? %> class="empty"<% end %>>
+          <% issues.each do|issue| %>
+            <li class="card <%= issue.tracker.name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-weight="<%= issue.weight %>" data-status-id="<%= issue.status_id %>">
+              <div class="issue">
+                <div class="issue-heading">
+                  <p class="issue-number meta">
+                    <input type="checkbox" name="ids[]" value="<%= issue.id.to_s %>" />
+                    <%= link_to "#{issue.tracker} ##{issue.id.to_s}", :controller => :issues, :action => :show, :id => issue.id %>
+                  </p>
+                </div>
+                <h3><%= link_to issue.subject, :controller => :issues, :action => :show, :id => issue.id %></h3>
+                <% if defined? issue.assigned_to.name %>
+                  <p class="meta">
+                    <%= link_to issue.assigned_to.name, :controller => :users, :action => :show, :id => issue.assigned_to.id %>
+                  </p>
+                <% end %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script type="text/javascript">
+  var project_save_url = '/projects/<%= @project.id %>/taskboard/save';
+  var project_archive_url = '/projects/<%= @project.id %>/taskboard/archive-issues';
+  var sections = [];
+  $$('#sortable-root .taskboard-pane ul').each(function(el) {
+    sections.push(el);
+  });
+  sections.each(function(el) {
+    new TaskBoardPane(el.id, {constraint: false, containment: sections, dropOnEmpty: true, only: 'card'});
+  });
+  TaskBoardUtils.checkboxListener();
+  // Sortable.create('sortable-root', {tree: true, dropOnEmpty: true, constraint: false, overlap: 'vertical'});
+</script>
+
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'taskboard', :plugin => 'redmine_task_board' %>
+<% end %>
