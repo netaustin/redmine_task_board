@@ -6,7 +6,7 @@ class TaskBoardColumn < ActiveRecord::Base
   validates_length_of :title, :maximum => 255
 
   def self.empty_status(status_id)
-    columns = TaskBoardColumn
+    columns = TaskBoardColumn \
       .select(:id) \
       .joins('INNER JOIN issue_statuses_task_board_columns istbc ON istbc.task_board_column_id = task_board_columns.id') \
       .where('istbc.issue_status_id = ?', status_id)
