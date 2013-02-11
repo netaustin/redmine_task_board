@@ -59,6 +59,6 @@
   </div>
 
   <script type="text/javascript">
-    var taskboard_settings = new TaskBoardSettings('taskboard-columns', {constraint: false, tag: 'ul', handle: 'head', weightSelector: '.column-options .column-weight', overlap: 'horizontal'});
+    var taskboard_settings = new TaskBoardSettings('taskboard-columns', {tag: 'ul', items: '> ul:visible', handle: '.head', weightSelector: '.column-options .column-weight', axis: 'x'});
   </script>
 <% end %>

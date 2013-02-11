@@ -1,15 +1,54 @@
-var TaskBoardSortable = Class.create({
+/* Simple JavaScript Inheritance
+ * By John Resig http://ejohn.org/
+ * MIT Licensed.
+ */
+(function(){
+  var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
+  this.Class = function(){};
+  Class.extend = function(prop) {
+    var _super = this.prototype;
+    initializing = true;
+    var prototype = new this();
+    initializing = false;
+    for (var name in prop) {
+      prototype[name] = typeof prop[name] == "function" &&
+        typeof _super[name] == "function" && fnTest.test(prop[name]) ?
+        (function(name, fn){
+          return function() {
+            var tmp = this._super;
+            this._super = _super[name];
+            var ret = fn.apply(this, arguments);        
+            this._super = tmp;
+            return ret;
+          };
+        })(name, prop[name]) :
+        prop[name];
+    }
+    function Class() {
+      if ( !initializing && this.init )
+        this.init.apply(this, arguments);
+    }
+    Class.prototype = prototype;
+    Class.prototype.constructor = Class;
+    Class.extend = arguments.callee;
+   
+    return Class;
+  };
+})();
+
+var TaskBoardSortable = Class.extend({
   
   sortable: null,
   id: null,
   options: {},
   
-  initialize: function(id, options) {
+  init: function(id, options) {
     this.id = id;
     this.options = options;
-    this.options.onChange = this.onChange.bind(this);
-    this.options.onUpdate = this.onUpdate.bind(this);
-    Sortable.create(id, this.options);
+    this.options.change = this.onChange.bind(this);
+    this.options.update = this.onUpdate.bind(this);
+    this.root = $('#' + this.id);
+    this.root.sortable(this.options);
   },
   
   onChange: function() { },
@@ -18,72 +57,73 @@ var TaskBoardSortable = Class.create({
 
 });
 
-var TaskBoardPane = Class.create(TaskBoardSortable, {
+var TaskBoardPane = TaskBoardSortable.extend({
 
-  initialize: function($super, id, options) {
-    $super(id, options);
-    this.max_issues = parseInt($(id).readAttribute('data-max-issues'));
-    $(this.id).writeAttribute('data-card-count', this.getNumberOfCards());
+  init: function(id, options) {
+    this._super(id, options);
+    this.max_issues = parseInt(this.root.data('max-issues'));
+    this.root.data('card-count', this.getNumberOfCards());
   },
 
   getNumberOfCards: function() {
-    return $(this.id).select('.card').length;
+    return this.root.find('.card').length;
   },
 
-  onUpdate: function(list) {
+  onUpdate: function(e, ui) {
     // Add or remove 'empty' class
-    if (list.hasClassName('empty') && list.descendants().length > 0) {
-      list.removeClassName('empty');
+    var list = ui.item.parent();
+    if (list.hasClass('empty') && list.find('.card').length > 0) {
+      list.removeClass('empty');
     }
-    else if (list.descendants().length == 0) {
-      list.addClassName('empty');
+    else if (list.find('.card').length == 0) {
+      list.addClass('empty');
     }
 
     // Deal with max issue limit
-    if (this.max_issues > 0 && $(this.id).childElements().length > this.max_issues) {
+    if (this.max_issues > 0 && this.root.find('.card').length > this.max_issues) {
       var i = 1;
-      $(this.id).childElements().each((function(card) {
+      var self = this;
+      this.root.find('.card').each(function() {
         // Clear legal cards of the over-limit class
-        if (i <= this.max_issues) {
-          card.removeClassName('over-limit');
+        if (i <= self.max_issues) {
+          $(this).removeClass('over-limit');
         }
 
         // Add a dashed line under the last legal issue, reset others
-        if (this.max_issues == i) {
-          card.addClassName('at-limit');
+        if (self.max_issues == i) {
+          $(this).addClass('at-limit');
         }
         else {
-          card.removeClassName('at-limit');
+          $(this).removeClassName('at-limit');
         }
 
         // Add over-limit class to over-limit issues
-        if (i > this.max_issues) {
-          console.log('over limit');
-          card.addClassName('over-limit');
+        if (i > self.max_issues) {
+          $(this).addClass('over-limit');
         }
         i++;
-      }).bind(this));
+      });
     }
     else {
-      $(this.id).childElements().each(function(card) {
-        card.removeClassName('over-limit');
-        card.removeClassName('at-limit');
+      this.root.find('.card').each(function() {
+        $(this).removeClass('over-limit');
+        $(this).removeClass('at-limit');
       });
     }
 
     // handle card movements
 
     // a card has been moved into this column.
-    if (this.getNumberOfCards() > $(this.id).readAttribute('data-card-count')) {
-      list.childElements().each(function(card) {
-        if (list.readAttribute('data-status-id') != card.readAttribute('data-status-id')) {
+    if (this.getNumberOfCards() > list.data('card-count')) {
+      list.find('.card').each(function() {
+        if (list.data('status-id') != $(this).data('status-id')) {
           TaskBoardUtils.save([
-            TaskBoardUtils.serialize($(list.id)), // save ordering of this column
-            TaskBoardUtils.serialize($('column_' + card.readAttribute('data-status-id'))), // save ordering of previous column
-            TaskBoardUtils.moveParam(card.readAttribute('data-issue-id'), list.readAttribute('data-status-id'))
+            TaskBoardUtils.column_serialize(list), // save ordering of this column
+            TaskBoardUtils.column_serialize($('#' + 'column_' + $(this).data('status-id'))), // save ordering of previous column
+            TaskBoardUtils.moveParam($(this).data('issue-id'), list.data('status-id'))
           ], {
             onSuccess: function() {
-              card.writeAttribute('data-status-id', list.readAttribute('data-status-id'));
+              $(this).data('status-id', list.data('status-id'));
             }
           });
         }
@@ -91,24 +131,24 @@ var TaskBoardPane = Class.create(TaskBoardSortable, {
     }
 
     // this column has been reordered
-    else if(this.getNumberOfCards() == $(this.id).readAttribute('data-card-count')) {
-      TaskBoardUtils.save([TaskBoardUtils.serialize($(list.id))]);
+    else if(this.getNumberOfCards() == list.data('card-count')) {
+      TaskBoardUtils.save([TaskBoardUtils.column_serialize(list)]);
     }
 
     // We don't handle (this.getNumberOfCards() < $(this.id).readAttribute('data-card-count'))
     // because the gaining column handles re-weighting for the losing column for AJAX efficiency.
 
-    list.writeAttribute('data-card-count', this.getNumberOfCards());
+    list.data('card-count', this.getNumberOfCards());
   },
 
 });
 
 var TaskBoardUtils = {
 
-  serialize: function(list) {
+  column_serialize: function(list) {
     var params = [];
-    list.childElements().each(function(card) {
-      params.push('sort[' + list.readAttribute('data-status-id') + '][]=' + card.readAttribute('data-issue-id'));
+    list.find('.card').each(function() {
+      params.push('sort[' + list.data('status-id') + '][]=' + $(this).data('issue-id'));
     });
     return params.join('&');
   },
@@ -118,49 +158,43 @@ var TaskBoardUtils = {
   },
 
   save: function(params) {
-    var options = Object.extend({
-      method: 'post',
-      parameters: params.join('&'),
-      onLoading: function() {
-        $('ajax-indicator').show();
-      },
-      onComplete: function() {
-        $('ajax-indicator').hide();
+    $('#ajax-indicator').show();
+    $.ajax(project_save_url, {
+      type: 'post',
+      data: params.join('&'),
+      complete: function() {
+        $('#ajax-indicator').hide();
       }
-    }, arguments[1] || {});
-
-    new Ajax.Request(project_save_url, options);
+    });
   },
 
   checkboxListener: function() {
     TaskBoardUtils.hideButtonsIfNoneChecked();
-    $$('.card input[type="checkbox"]').invoke('observe', 'click', function(field) {
-      if (!$('taskboard-buttons').visible() && this.checked) {
-        $('taskboard-buttons').show();
+    $(document).on('click', '.card input[type="checkbox"]', function() {
+      if (!$('#taskboard-buttons').is(':visible') && this.checked) {
+        $('#taskboard-buttons').show();
       }
       if (!this.checked) {
         TaskBoardUtils.hideButtonsIfNoneChecked();
       }
     });
 
-    $('edit-issues').observe('click', function() {
+    $(document).on('click', '#edit-issues', function() {
       location.href = '/issues/bulk_edit?' + TaskBoardUtils.serializeCheckedButtons();
     });
 
-    $('archive-issues').observe('click', function() {
-      new Ajax.Request(project_archive_url, {
-        method: 'post',
-        parameters: TaskBoardUtils.serializeCheckedButtons(),
-        onLoading: function() {
-          $('ajax-indicator').show();
+    $(document).on('click', '#archive-issues', function() {
+      $('#ajax-indicator').show();
+      $.ajax(project_archive_url, {
+        type: 'post',
+        data: TaskBoardUtils.serializeCheckedButtons(),
+        complete: function() {
+          $('#ajax-indicator').hide();
         },
-        onComplete: function() {
-          $('ajax-indicator').hide();
-        },
-        onSuccess: function() {
-          $$('.card input[type="checkbox"]').each(function(cb) {
-            if (cb.checked) {
-              $('issue_' + cb.value).remove();
+        success: function() {
+          $('.card input[type="checkbox"]').each(function() {
+            if ($(this).is(':checked')) {
+              $('#issue_' + $(this).val()).remove();
             }
           });
         }
@@ -170,37 +204,37 @@ var TaskBoardUtils = {
 
   hideButtonsIfNoneChecked: function() {
     var found_checked = false;
-    $$('.card input[type="checkbox"]').each(function(cb) {
-      if (cb.checked) {
+    $('.card input[type="checkbox"]').each(function() {
+      if (this.checked) {
         found_checked = true;
-        throw $break;
+        return false;
       }
     });
     if (!found_checked) {
-      $('taskboard-buttons').hide();
+      $('#taskboard-buttons').hide();
     }
   },
 
   serializeCheckedButtons: function() {
     var params = [];
-    $$('.card input[type="checkbox"]').each(function(cb) {
-      if (cb.checked) {
-        params.push('ids[]=' + cb.value);
+    $('.card input[type="checkbox"]').each(function() {
+      if (this.checked) {
+        params.push('ids[]=' + $(this).val());
       }
     });
     return params.join('&');
   }
 }
 
-var TaskBoardSettings = Class.create(TaskBoardSortable, {
+var TaskBoardSettings = TaskBoardSortable.extend({
   
-  onChange: function() {
+  onUpdate: function(e, ui) {
     var weight = 0;
-    $(this.id).select(this.options.tag).each((function(el) {
-      var weightInput = el.down(this.options.weightSelector);
-      console.log(weightInput);
-      weightInput.writeAttribute('value', weight++);
-    }).bind(this));
+    var self = this;
+    this.root.find(this.options.items).each(function() {
+      var weightInput = $(this).find(self.options.weightSelector);
+      if ($(weightInput).length > 0) $(weightInput).val(weight++);
+    });
   }
 
 });

@@ -49,51 +49,24 @@ class TaskboardController < ApplicationController
 
   def create_column
     @column = TaskBoardColumn.new :project => @project, :title => params[:title]
-    respond_to do |format|
-      if @column.save
-        format.js{ render :update do |page|
-          page.replace_html 'column_manager',
-            :partial => 'settings/column_manager',
-            :locals => {
-              :columns => TaskBoardColumn.find_all_by_project_id(@project.id),
-              :statuses => IssueStatus.all
-            }
-        end}
-      else
-        format.js{ render :update do |page|
-          page.replace_html 'column_manager', :label_task_board_application_error
-        end}
-      end
-    end
+    @column.save
+    render 'settings/update'
   end
 
   def delete_column
     @column = TaskBoardColumn.find(params[:column_id])
-    respond_to do |format|
-      if @column.delete
-        format.js{ render :update do |page|
-          page.replace_html 'column_manager',
-            :partial => 'settings/column_manager',
-            :locals => {
-              :columns => TaskBoardColumn.find_all_by_project_id(@project.id, :order => "weight ASC"),
-              :statuses => IssueStatus.all
-            }
-        end}
-      else
-        format.js{ render :update do |page|
-          page.replace_html 'column_manager', :label_task_board_application_error
-        end}
-      end
-    end
+    @column.delete
+    render 'settings/update'
   end
   
   def update_columns
     params[:column].each do |column_id, new_state|
-      @column = TaskBoardColumn.find(column_id.to_i)
-      @column.weight = new_state[:weight].to_i
-      @column.max_issues = new_state[:max_issues].to_i
-      @column.save
-      @column.issue_statuses.clear()
+      column = TaskBoardColumn.find(column_id.to_i)
+      print column.title + ' ' + new_state[:weight] + ". "
+      column.weight = new_state[:weight].to_i
+      column.max_issues = new_state[:max_issues].to_i
+      column.save!
+      column.issue_statuses.clear()
     end
     params[:status].each do |status_id, column_id|
       status_id = status_id.to_i
@@ -103,16 +76,7 @@ class TaskboardController < ApplicationController
         @column.issue_statuses << IssueStatus.find(status_id)
       end
     end
-    respond_to do |format|
-      format.js{ render :update do |page|
-        page.replace_html 'column_manager',
-          :partial => 'settings/column_manager',
-          :locals => {
-            :columns => TaskBoardColumn.find_all_by_project_id(@project.id, :order => "weight ASC"),
-            :statuses => IssueStatus.all
-          }
-      end}
-    end
+    render 'settings/update'
   end
 
   private

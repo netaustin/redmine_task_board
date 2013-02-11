@@ -42,12 +42,12 @@
   var project_save_url = '/projects/<%= @project.id %>/taskboard/save';
   var project_archive_url = '/projects/<%= @project.id %>/taskboard/archive-issues';
   var sections = [];
-  $$('#sortable-root .taskboard-pane ul').each(function(el) {
-    sections.push(el);
+  $('#sortable-root .taskboard-pane ul').each(function() {
+    sections.push($(this).attr('id'));
   });
-  sections.each(function(el) {
-    new TaskBoardPane(el.id, {constraint: false, containment: sections, scroll: window, dropOnEmpty: true, only: 'card'});
-  });
+  for (var i in sections) {
+    new TaskBoardPane(sections[i], {connectWith: '#sortable-root .taskboard-pane ul', constraint: false, scroll: true, dropOnEmpty: true, items: '> .card'});
+  }
   TaskBoardUtils.checkboxListener();
   // Sortable.create('sortable-root', {tree: true, dropOnEmpty: true, constraint: false, overlap: 'vertical'});
 </script>

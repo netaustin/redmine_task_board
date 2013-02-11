@@ -9,17 +9,15 @@
   </div>
 
   <script type="text/javascript">
-    $('taskboard-unarchive').observe('click', function() {
-      new Ajax.Request('/issues/<%= @issue.id %>/taskboard-unarchive', {
-        method: 'post',
-        onLoading: function() {
-          $('ajax-indicator').show();
+    $('#taskboard-unarchive').on('click', function() {
+      $('#ajax-indicator').show();
+      new $.ajax('/issues/<%= @issue.id %>/taskboard-unarchive', {
+        type: 'post',
+        complete: function() {
+          $('#ajax-indicator').hide();
         },
-        onComplete: function() {
-          $('ajax-indicator').hide();
-        },
-        onSuccess: function() {
-          $('taskboard-issue').remove();
+        success: function() {
+          $('#taskboard-issue').remove();
         }
       });
     });
