@@ -117,3 +117,9 @@
   background: #ccc;
   padding: 3px;
 }
+
+.issue-priority {
+  float: right;
+  padding: 2px;
+  font-size: 9px;
+}

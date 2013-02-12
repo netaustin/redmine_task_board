@@ -15,12 +15,15 @@
         <% end %>
         <ul data-status-id="<%= status_id %>" data-max-issues="<%= column.max_issues %>" id="column_<%= status_id %>"<% if issues.empty? %> class="empty"<% end %>>
           <% issues.each do|issue| %>
-            <li class="card <%= issue.tracker.name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-weight="<%= issue.weight %>" data-status-id="<%= issue.status_id %>">
+            <li class="card priority-<%= issue.priority.id.to_s %> <%= issue.tracker.name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-weight="<%= issue.weight %>" data-status-id="<%= issue.status_id %>">
               <div class="issue">
                 <div class="issue-heading">
                   <p class="issue-number meta">
                     <input type="checkbox" name="ids[]" value="<%= issue.id.to_s %>" />
                     <%= link_to "#{issue.tracker} ##{issue.id.to_s}", :controller => :issues, :action => :show, :id => issue.id %>
+                  </p>
+                  <p class="issue-priority">
+                    <%= issue.priority.name %>
                   </p>
                 </div>
                 <h3><%= link_to issue.subject, :controller => :issues, :action => :show, :id => issue.id %></h3>
