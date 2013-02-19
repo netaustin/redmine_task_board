@@ -157,6 +157,8 @@ var MyTaskBoardPane = TaskBoardSortable.extend({
   onUpdate: function(e, ui) {
     // Add or remove 'empty' class
     var list = ui.item.parent();
+    if (list.attr('id') != 'prioritized') return;
+    
     if (list.hasClass('empty') && list.find('.card').length > 0) {
       list.removeClass('empty');
     }
