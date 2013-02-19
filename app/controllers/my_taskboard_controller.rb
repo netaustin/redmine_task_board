@@ -48,9 +48,7 @@ class MyTaskboardController < ApplicationController
     params[:sort].each do |issue_id|
       unless used_ids.include? issue_id
         used_ids << issue_id
-        tba = TaskBoardAssignee.first_or_create(:issue_id => issue_id, :assignee_id => @user.id)
-        tba.weight = weight
-        tba.save
+        tba = TaskBoardAssignee.where(:issue_id => issue_id, :assignee_id => @user.id).first_or_create(:weight => weight)
         weight += 1
       end
     end
