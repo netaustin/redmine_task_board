@@ -44,9 +44,13 @@ class MyTaskboardController < ApplicationController
   def save
     TaskBoardAssignee.destroy_all(:assignee_id => @user.id)
     weight = 1;
+    used_ids = Array.new
     params[:sort].each do |issue_id|
-      TaskBoardAssignee.create(:issue_id => issue_id, :assignee_id => @user.id, :weight => weight)
-      weight += 1
+      unless used_ids.include? issue_id
+        used_ids << issue_id
+        TaskBoardAssignee.create(:issue_id => issue_id, :assignee_id => @user.id, :weight => weight)
+        weight += 1
+      end
     end
     respond_to do |format|
       format.js{ head :ok }
