@@ -18,7 +18,7 @@ class MyTaskboardController < ApplicationController
           issue_priority.name as priority_name,
           issue_priority.id as priority_id,
           projects.id as project_id,
-          COALESCE(tba.weight, 0) as weight,
+          tba.weight,
           issue_statuses.name as status_name,
           tba.issue_id"
         ) \
