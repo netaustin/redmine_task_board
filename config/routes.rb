@@ -1,6 +1,9 @@
 # Plugin's routes
 # See: http://guides.rubyonrails.org/routing.html
 
+get 'users/:id/taskboard', :to => 'my_taskboard#index'
+post 'users/:id/taskboard/save', :to => 'my_taskboard#save'
+get 'my/taskboard', :to => 'my_taskboard#my_index'
 get 'projects/:project_id/taskboard', :to => 'taskboard#index'
 post 'projects/:project_id/taskboard/save', :to => 'taskboard#save'
 post 'projects/:project_id/taskboard/archive-issues', :to => 'taskboard#archive_issues'

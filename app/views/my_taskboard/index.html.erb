@@ -1,0 +1,73 @@
+<%= javascript_include_tag('task_board', :plugin => 'redmine_task_board') %>
+
+<div id="taskboard-buttons">
+  <input type="button" id="edit-issues" value="<%= translate :task_board_issue_bulk_edit %>" />
+</div>
+
+<div class="my-taskboard-wrapper" id="sortable-root">
+  <div id="prioritized-wrapper" class="taskboard-pane">
+    <h4><%= translate :task_board_prioritized %></h4>
+      <ul id="prioritized">
+      <% @prioritized.each do|issue| %>
+        <li class="card priority-<%= issue.priority_id.to_s %> <%= issue.tracker_name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-status-id="<%= issue.status_id %>">
+            <div class="issue">
+              <div class="issue-heading">
+                <p class="issue-number meta">
+                  <input type="checkbox" name="ids[]" value="<%= issue.id.to_s %>" />
+                  <%= link_to "#{issue.tracker_name} ##{issue.id.to_s}", :controller => :issues, :action => :show, :id => issue.id %>
+                </p>
+                <p class="issue-priority">
+                  <%= issue.priority_name %>
+                </p>
+              </div>
+              <h3><%= link_to issue.subject, :controller => :issues, :action => :show, :id => issue.id %></h3>
+              <p class="meta">
+                <%= link_to issue.project_name, :controller => :projects, :action => :show, :id => issue.project_id %> / <%= issue.status_name %>
+              </p>
+            </div>
+          </li>
+      <% end %>
+    </ul>
+  </div>
+  <div id="not-prioritized-wrapper" class="taskboard-pane">
+    <h4><%= translate :task_board_not_prioritized %></h4>
+    <ul id="not-prioritized">
+      <% @not_prioritized.each do|issue| %>
+        <li class="card priority-<%= issue.priority_id.to_s %> <%= issue.tracker_name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-status-id="<%= issue.status_id %>">
+            <div class="issue">
+              <div class="issue-heading">
+                <p class="issue-number meta">
+                  <input type="checkbox" name="ids[]" value="<%= issue.id.to_s %>" />
+                  <%= link_to "#{issue.tracker_name} ##{issue.id.to_s}", :controller => :issues, :action => :show, :id => issue.id %>
+                </p>
+                <p class="issue-priority">
+                  <%= issue.priority_name %>
+                </p>
+              </div>
+              <h3><%= link_to issue.subject, :controller => :issues, :action => :show, :id => issue.id %></h3>
+              <p class="meta">
+                <%= link_to issue.project_name, :controller => :projects, :action => :show, :id => issue.project_id %> / <%= issue.status_name %>
+              </p>
+            </div>
+          </li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var project_save_url = '/users/<%= @user.id %>/taskboard/save';
+  var sections = [];
+  $('#sortable-root .taskboard-pane ul').each(function() {
+    sections.push($(this).attr('id'));
+  });
+  for (var i in sections) {
+    new MyTaskBoardPane(sections[i], {connectWith: '#sortable-root .taskboard-pane ul', constraint: false, scroll: true, dropOnEmpty: true, items: '> .card'});
+  }
+  TaskBoardUtils.checkboxListener();
+  // Sortable.create('sortable-root', {tree: true, dropOnEmpty: true, constraint: false, overlap: 'vertical'});
+</script>
+
+<% content_for :header_tags do %>
+  <%= stylesheet_link_tag 'taskboard', :plugin => 'redmine_task_board' %>
+<% end %>

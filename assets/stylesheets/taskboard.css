@@ -122,4 +122,42 @@
   float: right;
   padding: 2px;
   font-size: 9px;
+  margin: 0;
+}
+
+#prioritized-wrapper {
+  width: 30%;
+  float: left;
+}
+
+#not-prioritized-wrapper {
+  width: 65%;
+  float: left;
+}
+
+ul#not-prioritized {
+  overflow: hidden;
+}
+
+#not-prioritized-wrapper ul li {
+  float: left;
+  width: 200px;
+  height: 70px;
+  margin: 0 10px 10px 0;
+}
+
+#not-prioritized-wrapper ul li .issue {
+  height: 60px;
+}
+
+#not-prioritized-wrapper ul li .issue .issue-heading {
+  height: 16px;
+}
+
+#not-prioritized-wrapper ul li .issue h3 {
+  height: 24px;
+  line-height: 12px;
+  font-size: 12px;
+  margin-bottom: 0;
+  overflow: hidden;
 }

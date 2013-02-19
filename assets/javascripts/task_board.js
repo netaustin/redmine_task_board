@@ -143,6 +143,42 @@ var TaskBoardPane = TaskBoardSortable.extend({
 
 });
 
+var MyTaskBoardPane = TaskBoardSortable.extend({
+
+  init: function(id, options) {
+    this._super(id, options);
+    this.root.data('card-count', this.getNumberOfCards());
+  },
+
+  getNumberOfCards: function() {
+    return this.root.find('.card').length;
+  },
+
+  onUpdate: function(e, ui) {
+    // Add or remove 'empty' class
+    var list = ui.item.parent();
+    if (list.hasClass('empty') && list.find('.card').length > 0) {
+      list.removeClass('empty');
+    }
+    else if (list.find('.card').length == 0) {
+      list.addClass('empty');
+    }
+
+    var priority_list = [];
+    $('#prioritized').find('li.card').each(function() {
+      priority_list.push('sort[]=' + $(this).data('issue-id'));
+    });
+    TaskBoardUtils.save(priority_list);
+
+    // We don't handle (this.getNumberOfCards() < $(this.id).readAttribute('data-card-count'))
+    // because the gaining column handles re-weighting for the losing column for AJAX efficiency.
+
+
+    list.data('card-count', this.getNumberOfCards());
+  },
+
+});
+
 var TaskBoardUtils = {
 
   column_serialize: function(list) {

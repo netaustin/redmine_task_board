@@ -15,3 +15,5 @@ en:
   task_board_issue_unarchive: Unarchive Issue
   task_board_issue_bulk_archive: Archive Selected Issues
   task_board_issue_bulk_edit: Edit Selected Issues
+  task_board_not_prioritized: Other Issues
+  task_board_prioritized: Prioritized Issues

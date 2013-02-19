@@ -72,7 +72,7 @@ class TaskboardController < ApplicationController
       status_id = status_id.to_i
       column_id = column_id.to_i
       unless column_id == 0
-        @column = TaskBoardColumn.find(column_id)
+        @columnsn = TaskBoardColumn.find(column_id)
         @column.issue_statuses << IssueStatus.find(status_id)
       end
     end
