@@ -42,8 +42,8 @@
 </div>
 
 <script type="text/javascript">
-  var project_save_url = '/projects/<%= @project.id %>/taskboard/save';
-  var project_archive_url = '/projects/<%= @project.id %>/taskboard/archive-issues';
+  var project_save_url = '<%= Redmine::Utils::relative_url_root %>/projects/<%= @project.id %>/taskboard/save';
+  var project_archive_url = '<%= Redmine::Utils::relative_url_root %>/projects/<%= @project.id %>/taskboard/archive-issues';
   var sections = [];
   $('#sortable-root .taskboard-pane ul').each(function() {
     sections.push($(this).attr('id'));
