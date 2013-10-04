@@ -16,7 +16,12 @@ class TaskBoardColumn < ActiveRecord::Base
 
   def issues(order_column="project_weight")
   	@column_statuses = Hash.new
-        subproject_ids = project.self_and_descendants.collect {|p| p.id}.flatten
+        subproject_ids = [project.id]
+        include_subprojects = \
+            Setting.plugin_redmine_task_board['include_subprojects'].to_i == 1
+        if include_subprojects
+            subproject_ids = project.self_and_descendants.collect {|p| p.id}.flatten
+        end
   	self.issue_statuses.order(:name).each do |status|
   		@column_statuses[status.id] = Array.new
   		issues = Issue.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
