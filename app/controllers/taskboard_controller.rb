@@ -72,8 +72,8 @@ class TaskboardController < ApplicationController
       status_id = status_id.to_i
       column_id = column_id.to_i
       unless column_id == 0
-        @columnsn = TaskBoardColumn.find(column_id)
-        @columnsn.issue_statuses << IssueStatus.find(status_id)
+        @columns = TaskBoardColumn.find(column_id)
+        @columns.issue_statuses << IssueStatus.find(status_id)
       end
     end
     render 'settings/update'
