@@ -1,5 +1,14 @@
 <%= javascript_include_tag('task_board', :plugin => 'redmine_task_board') %>
 
+<div id="taskboard-filters">
+  <p>
+    <%= label_tag "priority", "Priority" %>
+    <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
+    <%= label_tag "project", "Project" %>
+    <%= select_tag("project", options_for_select([['Any', '0']] + Project.all(:order => 'name', :conditions => {:status => 1}).select{|project| @user.allowed_to?(:log_time, project)}.collect{|p| [p.name, p.id] })) %>
+  </p>
+</div>
+
 <div id="taskboard-buttons">
   <input type="button" id="edit-issues" value="<%= translate :task_board_issue_bulk_edit %>" />
 </div>
@@ -9,7 +18,8 @@
     <h4><%= translate :task_board_prioritized %></h4>
       <ul id="prioritized">
       <% @prioritized.each do|issue| %>
-        <li class="card priority-<%= issue.priority_id.to_s %> <%= issue.tracker_name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-status-id="<%= issue.status_id %>">
+        <li class="card priority-<%= issue.priority.id.to_s %> <%= issue.tracker_name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-priority="<%= issue.priority.id.to_s %>" data-status-id="<%= issue.status_id %>" data-project="<%= issue.project.id.to_s %>">
+
             <div class="issue">
               <div class="issue-heading">
                 <p class="issue-number meta">
@@ -33,7 +43,7 @@
     <h4><%= translate :task_board_not_prioritized %></h4>
     <ul id="not-prioritized">
       <% @not_prioritized.each do|issue| %>
-        <li class="card priority-<%= issue.priority_id.to_s %> <%= issue.tracker_name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-status-id="<%= issue.status_id %>">
+        <li class="card priority-<%= issue.priority.id.to_s %> <%= issue.tracker_name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-priority="<%= issue.priority.id.to_s %>" data-status-id="<%= issue.status_id %>" data-project="<%= issue.project.id.to_s %>">
             <div class="issue">
               <div class="issue-heading">
                 <p class="issue-number meta">
@@ -65,6 +75,7 @@
     new MyTaskBoardPane(sections[i], {connectWith: '#sortable-root .taskboard-pane ul', constraint: false, scroll: true, dropOnEmpty: true, items: '> .card'});
   }
   TaskBoardUtils.checkboxListener();
+  var filters = new TaskBoardFilters();
   // Sortable.create('sortable-root', {tree: true, dropOnEmpty: true, constraint: false, overlap: 'vertical'});
 </script>
 

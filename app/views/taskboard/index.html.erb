@@ -1,5 +1,16 @@
 <%= javascript_include_tag('task_board', :plugin => 'redmine_task_board') %>
 
+<div id="taskboard-filters">
+  <p>
+    <%= label_tag "assignee", "Assigned to" %>
+    <%= select_tag("assignee", options_for_select([['Anyone', '0']] + @project.members.collect { |m| [ m.name, m.user.id ] } )) %>
+    <%= label_tag "priority", "Priority" %>
+    <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
+    <%= label_tag "category", "Category" %>
+    <%= select_tag("category", options_for_select([['Any', '0']] + @project.issue_categories.collect { |m| [ m.name, m.id ] } )) %>
+  </p>
+</div>
+
 <div id="taskboard-buttons">
   <input type="button" id="edit-issues" value="<%= translate :task_board_issue_bulk_edit %>" />
   <input type="button" id="archive-issues" value="<%= translate :task_board_issue_bulk_archive %>" />
@@ -15,7 +26,7 @@
         <% end %>
         <ul data-status-id="<%= status_id %>" data-max-issues="<%= column.max_issues %>" id="column_<%= status_id %>"<% if issues.empty? %> class="empty"<% end %>>
           <% issues.each do|issue| %>
-            <li class="card priority-<%= issue.priority.id.to_s %> <%= issue.tracker.name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-weight="<%= issue.weight %>" data-status-id="<%= issue.status_id %>">
+            <li class="card priority-<%= issue.priority.id.to_s %> <%= issue.tracker.name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-priority="<%= issue.priority.id.to_s %>" data-assignee="<%= issue.assigned_to ? issue.assigned_to.id.to_s : 0 %>" data-category="<%= issue.category ? issue.category.id.to_s : 0 %>" data-weight="<%= issue.weight %>" data-status-id="<%= issue.status_id %>">
               <div class="issue">
                 <div class="issue-heading">
                   <p class="issue-number meta">
@@ -52,6 +63,7 @@
     new TaskBoardPane(sections[i], {connectWith: '#sortable-root .taskboard-pane ul', constraint: false, scroll: true, dropOnEmpty: true, items: '> .card'});
   }
   TaskBoardUtils.checkboxListener();
+  var filters = new TaskBoardFilters();
   // Sortable.create('sortable-root', {tree: true, dropOnEmpty: true, constraint: false, overlap: 'vertical'});
 </script>
 
