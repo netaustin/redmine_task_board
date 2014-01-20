@@ -7,58 +7,53 @@
 <% end %>
 
 <%= form_tag project_taskboard_columns_update_path(:project_id => @project.id), :method => 'put', :remote => true do %>
-  <ul class="cant-move">
-    <li class="head"><p class="cell"><%= translate :task_board_statuses %></p></li>
-    <% statuses.each do |issue_status| %>
-      <li><%= issue_status.name %></li>
-    <% end %>
-  </ul>
-
-  <ul class="cant-move">
-    <li class="head"><p class="cell"><%= translate :task_board_not_shown %></p></li>
-    <% statuses.each do |issue_status| %>
-      <li class="has-radio">
-        <%= radio_button_tag("status[#{issue_status.id}]", 0, TaskBoardColumn.empty_status(issue_status.id)) %>
-      </li>
-    <% end %>
-  </ul>
-
-  <div class="movable-columns" id="taskboard-columns">
-    <h4><%= translate :task_board_visible_columns %></h4>
-    <% columns.each do |column| %>
-      <ul>
-        <li class="head"><p class="cell"><%= column.title %></p></li>
-        <% statuses.each do |issue_status| %>
-          <li class="has-radio">
-            <%= radio_button_tag("status[#{issue_status.id}]", column.id, column.issue_status_ids.include?(issue_status.id)) %>
-           </li>
+  <div class="status-bucket column">
+    <h5>Available Statuses</h5>
+    <p><em>Configure the taskboard columns by dragging statuses to them.</em></p>
+    <ul class="buckets-wrapper status-holder">
+      <% statuses.each do |status| %>
+        <% if TaskBoardColumn.empty_status(@project.id, status.id) %>
+          <li class="status-pill" data-status-id="<%= status.id.to_s %>"><%= status.name %></li>
         <% end %>
-        <li><%= link_to(
-                  l(:button_delete),
-                  project_taskboard_columns_delete_path(:project_id => @project.id, :column_id => column.id),
-                  :method => :delete,
-                  :confirm => l(:text_are_you_sure),
-                  :remote => true,
-                  :class => 'icon icon-del'
-                )
-            %>
-        </li>
-        <li class="column-options">
+      <% end %>
+    </ul>
+  </div>
+  <div class="movable-columns" id="taskboard-columns">
+    <% columns.each do |column| %>
+      <div class="column dyn-column" data-column-id="<%= column.id.to_s %>">
+        <div class="input-wrapper"></div>
+        <h5><%= column.title %></h5>
+        <div class="column-meta">
+          <%= link_to(
+            l(:button_delete),
+            project_taskboard_columns_delete_path(:project_id => @project.id, :column_id => column.id),
+            :method => :delete,
+            :confirm => l(:text_are_you_sure),
+            :remote => true,
+            :class => 'icon icon-del'
+            )
+          %>
           <p class="cell">
             <%= label_tag("column[#{column.id}][max_issues]", translate(:task_board_task_limit)) %>
             <%= text_field_tag("column[#{column.id}][max_issues]", column.max_issues, :class => 'column-max-issues') %>
             <%= hidden_field_tag("column[#{column.id}][weight]", column.weight, :class => 'column-weight') %>
           </p>
-        </li>
-      </ul>
+        </div>
+        <ul class="buckets-wrapper status-holder clearfix">
+          <% column.issue_statuses.each do |status| %>
+            <li class="status-pill" data-status-id="<%= status.id.to_s %>"><%= status.name %></li>
+          <% end %>
+        </ul>
+      </div>
     <% end %>
   </div>
 
   <div class="form-save">
     <%= submit_tag(translate :task_board_save_changes) %>
   </div>
-
-  <script type="text/javascript">
-    var taskboard_settings = new TaskBoardSettings('taskboard-columns', {tag: 'ul', items: '> ul:visible', handle: '.head', weightSelector: '.column-options .column-weight', axis: 'x'});
-  </script>
 <% end %>
+
+<script type="text/javascript">
+  var taskboard_columns = new TaskBoardSettings('taskboard-columns', {tag: 'div', items: '> div.column', handle: 'h5', weightSelector: '.column-options .column-weight', axis: 'x'});
+  var taskboard_statuses = new TaskBoardStatuses('status-holder', {connectWith: '.status-holder'});
+</script>

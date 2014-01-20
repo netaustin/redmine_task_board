@@ -66,14 +66,13 @@ class TaskboardController < ApplicationController
       column.weight = new_state[:weight].to_i
       column.max_issues = new_state[:max_issues].to_i
       column.save!
-      column.issue_statuses.clear()
+      column.status_buckets.clear()
     end
-    params[:status].each do |status_id, column_id|
-      status_id = status_id.to_i
-      column_id = column_id.to_i
-      unless column_id == 0
-        @columns = TaskBoardColumn.find(column_id)
-        @columns.issue_statuses << IssueStatus.find(status_id)
+    params[:status].each do |column_id, statuses|
+      statuses.each do |status_id, weight|
+        status_id = status_id.to_i
+        column_id = column_id.to_i
+        StatusBucket.create!(:task_board_column_id => column_id, :issue_status_id => status_id, :weight => weight)
       end
     end
     render 'settings/update'

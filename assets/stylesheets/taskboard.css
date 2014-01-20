@@ -215,3 +215,7 @@ ul#not-prioritized {
 #not-prioritized-wrapper li.card.minimized {
   display: none;
 }
+
+.clearfix:before, .clearfix:after { content: ""; display: table; }
+.clearfix:after { clear: both; }
+.clearfix { zoom: 1; }
