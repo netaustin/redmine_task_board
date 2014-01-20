@@ -15,27 +15,33 @@ class TaskBoardColumn < ActiveRecord::Base
   end
 
   def issues(order_column="project_weight")
-  	@column_statuses = Hash.new
-  	self.issue_statuses.order(:weight).each do |status|
-  		@column_statuses[status.id] = Array.new
-  		issues = Issue.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
-  			.joins('LEFT OUTER JOIN task_board_issues AS tbi ON tbi.issue_id = issues.id') \
-  			.where("project_id = ? AND status_id = ? AND (is_archived IS NULL OR is_archived = 0)", self.project_id, status.id) \
-  			.order("weight ASC, created_on ASC")
-  		issues.each do |issue|
+    @column_statuses = Hash.new
+    subproject_ids = [project.id]
+    include_subprojects = \
+        Setting.plugin_redmine_task_board['include_subprojects'].to_i == 1
+    if include_subprojects
+        subproject_ids = project.self_and_descendants.collect {|p| p.id}.flatten
+    end
+    self.issue_statuses.order(:weight).each do |status|
+      @column_statuses[status.id] = Array.new
+      issues = Issue.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
+        .joins('LEFT OUTER JOIN task_board_issues AS tbi ON tbi.issue_id = issues.id') \
+        .where("project_id IN (?) AND status_id = ? AND (is_archived IS NULL OR is_archived = FALSE)", subproject_ids, status.id) \
+        .order("weight ASC, created_on ASC")
+      issues.each do |issue|
         # Create a TaskBoardIssue (i.e. a Card) if one doesn't exist already.
-  			unless issue.issue_id
+        unless issue.issue_id
           closed_and_old = (status.is_closed? and issue.updated_on.to_date < 14.days.ago.to_date)
-  				tbi = TaskBoardIssue.new(:issue_id => issue.id, :is_archived => closed_and_old)
+          tbi = TaskBoardIssue.new(:issue_id => issue.id, :is_archived => closed_and_old)
           tbi.save
           if closed_and_old
             next
           end
-  			end
+        end
         @column_statuses[status.id] << issue
-  		end
-  	end
-  	return @column_statuses
+      end
+    end
+    return @column_statuses
   end
 
 end

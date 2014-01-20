@@ -14,6 +14,10 @@ Redmine::Plugin.register :redmine_task_board do
   url 'https://github.com/netaustin/redmine_task_board'
   author_url 'http://www.alleyinteractive.com/'
 
+  settings :partial => 'settings/redmine_task_board_settings',
+           :default => {
+           }
+
   project_module :taskboard do
     permission :edit_taskboard, {:projects => :settings, :taskboard => [:create_column, :delete_column, :update_columns]}, :require => :member
     permission :view_taskboard, {:taskboard => [:index, :save, :archive_issues, :unarchive_issue]}, :require => :member
