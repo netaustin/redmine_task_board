@@ -307,3 +307,28 @@ var TaskBoardSettings = TaskBoardSortable.extend({
   }
 
 });
+
+var TaskBoardStatuses = TaskBoardSortable.extend({
+  init: function(cls, options) {
+    this.cls = cls;
+    this.options = options;
+    this.options.update = this.setInputs;
+    this.root = $('.' + this.cls);
+    this.root.sortable(this.options);
+    this.setInputs();
+  },
+
+  setInputs: function() {
+    $('div.dyn-column').each(function() {
+      var weight = 0,
+          column_id = $(this).data('column-id'),
+          $input_wrapper = $(this).find('div.input-wrapper');
+      $input_wrapper.empty();
+      $(this).find('.status-pill').each(function() {
+        $input_wrapper.append(
+          '<input type="hidden" name="status[' + column_id + '][' + $(this).data('status-id') + ']" value=' + (weight++) + '" />'
+        );
+      });
+    });
+  }
+})

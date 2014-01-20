@@ -1,22 +1,22 @@
 class TaskBoardColumn < ActiveRecord::Base
   unloadable
   belongs_to :project
-  has_and_belongs_to_many :issue_statuses
+  has_many :status_buckets
+  has_many :issue_statuses, :through => :status_buckets
   validates_presence_of :title, :project
   validates_length_of :title, :maximum => 255
 
-  def self.empty_status(status_id)
+  def self.empty_status(project_id, status_id)
     columns = TaskBoardColumn \
       .select(:id) \
-      .joins('INNER JOIN issue_statuses_task_board_columns istbc ON istbc.task_board_column_id = task_board_columns.id') \
-      .where('istbc.issue_status_id = ?', status_id)
-    puts columns
+      .joins('INNER JOIN status_buckets b ON b.task_board_column_id = task_board_columns.id') \
+      .where('b.issue_status_id = ? AND project_id = ?', status_id, project_id)
     return columns.empty?
   end
 
   def issues(order_column="project_weight")
   	@column_statuses = Hash.new
-  	self.issue_statuses.order(:name).each do |status|
+  	self.issue_statuses.order(:weight).each do |status|
   		@column_statuses[status.id] = Array.new
   		issues = Issue.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
   			.joins('LEFT OUTER JOIN task_board_issues AS tbi ON tbi.issue_id = issues.id') \
