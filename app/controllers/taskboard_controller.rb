@@ -23,7 +23,9 @@ class TaskboardController < ApplicationController
     end
     if params[:move] then
       params[:move].each do |issue_id, new_status_id|
-        issue = Issue.find(issue_id).update_attribute(:status_id, new_status_id)
+        issue = Issue.find(issue_id)
+        issue.init_journal(User.current)
+        issue.update_attribute(:status_id, new_status_id)
       end
     end
     respond_to do |format|
