@@ -26,7 +26,7 @@ class TaskBoardColumn < ActiveRecord::Base
       @column_statuses[status.id] = Array.new
       issues = Issue.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
         .joins('LEFT OUTER JOIN task_board_issues AS tbi ON tbi.issue_id = issues.id') \
-        .where("project_id IN (?) AND status_id = ? AND (is_archived IS NULL OR is_archived = FALSE)", subproject_ids, status.id) \
+        .where("project_id IN (?) AND status_id = ? AND (is_archived IS NULL OR is_archived = ?)", subproject_ids, status.id, false) \
         .order("weight ASC, created_on ASC")
       issues.each do |issue|
         # Create a TaskBoardIssue (i.e. a Card) if one doesn't exist already.
