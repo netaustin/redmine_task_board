@@ -49,6 +49,8 @@ var TaskBoardFilters = Class.extend({
       self.setFilter($(this));
       self.applyFilters();
     });
+    $('#taskboard-filters [name]').each(function(i, filter) {self.setFilter(filter);});
+    self.applyFilters();
   },
   setFilter: function(input) {
     var self = this;
