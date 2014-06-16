@@ -46,9 +46,13 @@ var TaskBoardFilters = Class.extend({
   init: function() {
     var self = this;
     $('#taskboard-filters').on('change', 'select', function() {
-      self.filters[$(this).attr('name')] = parseInt($(this).val());
+      self.setFilter($(this));
       self.applyFilters();
     });
+  },
+  setFilter: function(input) {
+    var self = this;
+    self.filters[$(input).attr('name')] = parseInt($(input).val());
   },
   applyFilters: function() {
     var self = this;
