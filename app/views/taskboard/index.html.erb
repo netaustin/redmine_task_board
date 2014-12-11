@@ -37,7 +37,9 @@
                     <%= issue.priority.name %>
                   </p>
                 </div>
-                <h3><%= link_to issue.subject, :controller => :issues, :action => :show, :id => issue.id %></h3>
+								<h3>
+									<%= link_to((issue.category ? issue.category.name + ': ' : '') + issue.subject, :controller => :issues, :action => :show, :id => issue.id) %>
+								</h3>
                 <% if defined? issue.assigned_to.name %>
                   <p class="meta">
                     <%= link_to issue.assigned_to.name, :controller => :users, :action => :show, :id => issue.assigned_to.id %>
