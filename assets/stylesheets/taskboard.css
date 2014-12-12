@@ -219,3 +219,12 @@ ul#not-prioritized {
 .clearfix:before, .clearfix:after { content: ""; display: table; }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
+
+.taskboard-pane .tag-list .tag-label-color {
+    padding: 0px 2px;
+    margin: 0px;
+		font-weight: normal;
+		font-size: 12px;
+}
+
+.taskboard-pane .tag-list .tag-label-color a { color: white !important; }

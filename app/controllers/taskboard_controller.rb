@@ -4,6 +4,7 @@ class TaskboardController < ApplicationController
   before_filter :find_project
   before_filter :authorize
   helper_method :column_manager_locals
+  helper TagsHelper if defined?(TagsHelper)
 
   def index
     @columns = TaskBoardColumn.find_all_by_project_id(@project.id, :order => 'weight')

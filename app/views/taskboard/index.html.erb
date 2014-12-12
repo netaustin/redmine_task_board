@@ -38,6 +38,11 @@
                   </p>
                 </div>
 								<h3>
+									<% if respond_to? :render_tag_link %>
+										<span class='tag-list'>
+											<%= safe_join(issue.tag_counts.collect{ |t| render_tag_link(t, :show_count => false, :open_only => false) }) %>
+										</span>
+									<% end %>
 									<%= link_to((issue.category ? issue.category.name + ': ' : '') + issue.subject, :controller => :issues, :action => :show, :id => issue.id) %>
 								</h3>
                 <% if defined? issue.assigned_to.name %>
@@ -71,4 +76,5 @@
 
 <% content_for :header_tags do %>
   <%= stylesheet_link_tag 'taskboard', :plugin => 'redmine_task_board' %>
+	<%= stylesheet_link_tag 'redmine_tags', :plugin => 'redmine_tags' if respond_to? :render_tag_link%>
 <% end %>
