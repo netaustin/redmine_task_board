@@ -3,7 +3,12 @@
 <div id="taskboard-filters">
   <p>
     <%= label_tag "assignee", "Assigned to" %>
-    <%= select_tag("assignee", options_for_select([['Anyone', '0']] + @project.members.collect { |m| [ m.name, m.user.id ] } )) %>
+    <%
+      author_values = [['Anyone', '0']]
+      author_values << ["<< #{l(:label_me)} >>", User.current.id] if User.current.logged?
+      author_values += @project.members.collect { |m| [ m.name, m.user.id ] }
+    %>
+    <%= select_tag("assignee", options_for_select(author_values)) %>
     <%= label_tag "priority", "Priority" %>
     <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
     <%= label_tag "category", "Category" %>
