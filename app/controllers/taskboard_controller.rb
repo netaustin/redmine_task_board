@@ -14,6 +14,11 @@ class TaskboardController < ApplicationController
     @include_subprojects = \
           Setting.plugin_redmine_task_board['include_subprojects'].to_i == 1 &&
           @project.children.active.any?
+    category_finder = :issue_categories
+    if @include_subprojects && @project.respond_to?(:inherited_categories)
+      category_finder = :inherited_categories
+    end
+    @categories = @project.send(category_finder)
   end
 
   def save

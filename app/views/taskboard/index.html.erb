@@ -7,7 +7,7 @@
     <%= label_tag "priority", "Priority" %>
     <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
     <%= label_tag "category", "Category" %>
-    <%= select_tag("category", options_for_select([['Any', '0']] + @project.issue_categories.collect { |m| [ m.name, m.id ] } )) %>
+    <%= select_tag("category", options_for_select([['Any', '0']] + @categories.collect { |m| [ m.name, m.id ] } )) %>
     <% if @include_subprojects %>
       <%= label_tag "project", "Project" %>
       <%= select_tag("project", options_for_select([['Any', '0']] + @project.children.active.collect { |m| [ m.name, m.id ] } )) %>
