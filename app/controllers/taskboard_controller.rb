@@ -11,6 +11,9 @@ class TaskboardController < ApplicationController
     IssueStatus.select([:id, :name]).each do |status|
       @status_names[status.id] = status.name
     end
+    @include_subprojects = \
+          Setting.plugin_redmine_task_board['include_subprojects'].to_i == 1 &&
+          @project.children.active.any?
   end
 
   def save

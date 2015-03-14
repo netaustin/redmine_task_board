@@ -8,6 +8,10 @@
     <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
     <%= label_tag "category", "Category" %>
     <%= select_tag("category", options_for_select([['Any', '0']] + @project.issue_categories.collect { |m| [ m.name, m.id ] } )) %>
+    <% if @include_subprojects %>
+      <%= label_tag "project", "Project" %>
+      <%= select_tag("project", options_for_select([['Any', '0']] + @project.children.active.collect { |m| [ m.name, m.id ] } )) %>
+    <% end %>
   </p>
 </div>
 
@@ -26,7 +30,7 @@
         <% end %>
         <ul data-status-id="<%= status_id %>" data-max-issues="<%= column.max_issues %>" id="column_<%= status_id %>"<% if issues.empty? %> class="empty"<% end %>>
           <% issues.each do|issue| %>
-            <li class="card priority-<%= issue.priority.id.to_s %> <%= issue.tracker.name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-priority="<%= issue.priority.id.to_s %>" data-assignee="<%= issue.assigned_to ? issue.assigned_to.id.to_s : 0 %>" data-category="<%= issue.category ? issue.category.id.to_s : 0 %>" data-weight="<%= issue.weight %>" data-status-id="<%= issue.status_id %>">
+            <li class="card priority-<%= issue.priority.id.to_s %> <%= issue.tracker.name.downcase.strip.gsub(' ', '-').gsub(/[^\w-]/, '') %>" id="issue_<%= issue.id %>" data-issue-id="<%= issue.id %>" data-priority="<%= issue.priority.id.to_s %>" data-assignee="<%= issue.assigned_to ? issue.assigned_to.id.to_s : 0 %>" data-category="<%= issue.category ? issue.category.id.to_s : 0 %>" data-weight="<%= issue.weight %>" data-status-id="<%= issue.status_id %>" data-project="<%= issue.project_id %>">
               <div class="issue">
                 <div class="issue-heading">
                   <p class="issue-number meta">
