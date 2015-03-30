@@ -212,6 +212,10 @@ ul#not-prioritized {
   color: #aaa;
 }
 
+.taskboard-pane .card.move-error .issue {
+  background-color: red;
+}
+
 #not-prioritized-wrapper li.card.minimized {
   display: none;
 }

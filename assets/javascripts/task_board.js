@@ -155,14 +155,35 @@ var TaskBoardPane = TaskBoardSortable.extend({
     // a card has been moved into this column.
     if (this.getNumberOfCards() > list.data('card-count')) {
       list.find('.card').each(function() {
-        if (list.data('status-id') != $(this).data('status-id')) {
+        var card = $(this);
+        if (list.data('status-id') != card.data('status-id')) {
           TaskBoardUtils.save([
             TaskBoardUtils.column_serialize(list), // save ordering of this column
             TaskBoardUtils.column_serialize($('#' + 'column_' + $(this).data('status-id'))), // save ordering of previous column
             TaskBoardUtils.moveParam($(this).data('issue-id'), list.data('status-id'))
           ], {
-            onSuccess: function() {
-              $(this).data('status-id', list.data('status-id'));
+            success: function() {
+              card.attr('data-status-id', list.data('status-id'));
+            },
+            error: function(xhr) {
+              var resp = jQuery.parseJSON(xhr.responseText);
+              $.each(resp, function(idx, data) {
+                card = $('#issue_' + data.issue_id);
+                var prev_list = $('.taskboard-pane ul[data-status-id=' + data.status_id +']');
+                var prev_sibling = prev_list.find('#issue_' + data.previous_sibling_id);
+                console.log(prev_sibling);
+                card.addClass('move-error');
+                card.slideUp({ complete: function() {
+                  if (prev_sibling.length) {
+                    card.insertAfter(prev_sibling);
+                  } else {
+                    card.appendTo(prev_list);
+                  }
+                  card.slideDown({ complete: function() {
+                    card.removeClass('move-error');
+                  }});
+                }});
+              });
             }
           });
         }
@@ -232,15 +253,16 @@ var TaskBoardUtils = {
     return 'move[' + issue_id + ']=' + new_status_id;
   },
 
-  save: function(params) {
+  save: function(params, options) {
     $('#ajax-indicator').show();
-    $.ajax(project_save_url, {
+    options = $.extend(options || {}, {
       type: 'post',
       data: params.join('&'),
       complete: function() {
         $('#ajax-indicator').hide();
       }
     });
+    $.ajax(project_save_url, options);
   },
 
   checkboxListener: function() {

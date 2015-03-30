@@ -14,20 +14,40 @@ class TaskboardController < ApplicationController
   end
 
   def save
-    params[:sort].each do |status_id, issues|
-      weight = 0;
-      issues.each do |issue_id|
-        tbi = TaskBoardIssue.find_by_issue_id(issue_id).update_attribute(:project_weight, weight)
-        weight += 1
-      end
-    end
+    failed_issues = []
     if params[:move] then
       params[:move].each do |issue_id, new_status_id|
-        issue = Issue.find(issue_id).update_attribute(:status_id, new_status_id)
+        issue = Issue.find(issue_id)
+        if issue.new_statuses_allowed_to(User.current).include?(IssueStatus.find(new_status_id))
+          issue.update_attribute(:status_id, new_status_id)
+        else
+          failed_issues << issue
+        end
+      end
+    end
+    if failed_issues.empty?
+      params[:sort].each do |status_id, issues|
+        weight = 0;
+        issues.each do |issue_id|
+          tbi = TaskBoardIssue.find_by_issue_id(issue_id).update_attribute(:project_weight, weight)
+          weight += 1
+        end
       end
     end
     respond_to do |format|
-      format.js{ head :ok }
+      format.js do
+        if failed_issues.empty?
+          head :ok
+        else
+          response = failed_issues.map do |i|
+            cards = TaskBoardIssue.find_all_by_issue_id(Project.all.first.issues.where(:status_id => i.status_id)).sort{|a,b| a.project_weight <=> b.project_weight}
+            index = cards.index{|i| i.issue_id == i.id}
+            prev_card_id = (index.nil? || index < 1) ? false : cards[index-1].issue_id
+            {:issue_id => i.id, :status_id => i.status_id, :previous_sibling_id => prev_card_id}
+          end
+          render :json => response, :status => 403
+        end
+      end
     end
   end
 
