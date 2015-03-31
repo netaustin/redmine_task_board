@@ -164,6 +164,7 @@ var TaskBoardPane = TaskBoardSortable.extend({
           ], {
             success: function() {
               card.attr('data-status-id', list.data('status-id'));
+              card.data('status-id', list.data('status-id'));
             },
             error: function(xhr) {
               var resp = jQuery.parseJSON(xhr.responseText);
@@ -171,13 +172,12 @@ var TaskBoardPane = TaskBoardSortable.extend({
                 card = $('#issue_' + data.issue_id);
                 var prev_list = $('.taskboard-pane ul[data-status-id=' + data.status_id +']');
                 var prev_sibling = prev_list.find('#issue_' + data.previous_sibling_id);
-                console.log(prev_sibling);
                 card.addClass('move-error');
                 card.slideUp({ complete: function() {
                   if (prev_sibling.length) {
                     card.insertAfter(prev_sibling);
                   } else {
-                    card.appendTo(prev_list);
+                    card.prependTo(prev_list);
                   }
                   card.slideDown({ complete: function() {
                     card.removeClass('move-error');

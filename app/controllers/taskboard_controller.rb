@@ -39,11 +39,11 @@ class TaskboardController < ApplicationController
         if failed_issues.empty?
           head :ok
         else
-          response = failed_issues.map do |i|
-            cards = TaskBoardIssue.find_all_by_issue_id(Project.all.first.issues.where(:status_id => i.status_id)).sort{|a,b| a.project_weight <=> b.project_weight}
-            index = cards.index{|i| i.issue_id == i.id}
+          response = failed_issues.map do |issue|
+            cards = TaskBoardIssue.find_all_by_issue_id(Project.all.first.issues.where(:status_id => issue.status_id)).sort{|a,b| a.project_weight <=> b.project_weight}
+            index = cards.index{|i| i.issue_id == issue.id}
             prev_card_id = (index.nil? || index < 1) ? false : cards[index-1].issue_id
-            {:issue_id => i.id, :status_id => i.status_id, :previous_sibling_id => prev_card_id}
+            {:issue_id => issue.id, :status_id => issue.status_id, :previous_sibling_id => prev_card_id}
           end
           render :json => response, :status => 403
         end
