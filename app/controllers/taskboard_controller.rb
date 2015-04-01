@@ -19,6 +19,7 @@ class TaskboardController < ApplicationController
       params[:move].each do |issue_id, new_status_id|
         issue = Issue.find(issue_id)
         if issue.new_statuses_allowed_to(User.current).include?(IssueStatus.find(new_status_id))
+          issue.init_journal(User.current)
           issue.update_attribute(:status_id, new_status_id)
         else
           failed_issues << issue
