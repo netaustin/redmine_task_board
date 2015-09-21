@@ -6,7 +6,7 @@ class TaskboardController < ApplicationController
   helper_method :column_manager_locals
 
   def index
-    @columns = TaskBoardColumn.find_all_by_project_id(@project.id, :order => 'weight')
+    @columns = TaskBoardColumn.where(:project_id => @project.id).order('weight').all()
     @status_names = Hash.new
     IssueStatus.select([:id, :name]).each do |status|
       @status_names[status.id] = status.name
