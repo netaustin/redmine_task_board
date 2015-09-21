@@ -5,7 +5,7 @@
     <%= label_tag "priority", "Priority" %>
     <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
     <%= label_tag "project", "Project" %>
-    <%= select_tag("project", options_for_select([['Any', '0']] + Project.all(:order => 'name', :conditions => {:status => 1}).select{|project| @user.allowed_to?(:log_time, project)}.collect{|p| [p.name, p.id] })) %>
+    <%= select_tag("project", options_for_select([['Any', '0']] + Project.order(:name).where(:status => 1).all().select{|project| @user.allowed_to?(:log_time, project)}.collect{|p| [p.name, p.id] })) %>
   </p>
 </div>
 
