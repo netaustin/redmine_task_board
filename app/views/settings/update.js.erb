@@ -1,6 +1,6 @@
 $('#column_manager').html("<%= escape_javascript( render(
 :partial => 'settings/column_manager',
 :locals => {
-  :columns => TaskBoardColumn.find_all_by_project_id(@project.id, :order => 'weight asc'),
+  :columns => TaskBoardColumn.where(:project => @project.id).order('weight ASC'),
   :statuses => IssueStatus.all
 })) -%>");

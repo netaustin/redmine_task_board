@@ -24,7 +24,7 @@ p.cell input { width: 30px; }
 
 <div id="column_manager">
   <%= render :partial => 'settings/column_manager', :locals => {
-        :columns => TaskBoardColumn.find_all_by_project_id(@project.id, :order => "weight ASC"),
+        :columns => TaskBoardColumn.where(:project => @project.id).order("weight ASC"),
         :statuses => IssueStatus.all
       }
   %>
