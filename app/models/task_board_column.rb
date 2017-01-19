@@ -22,7 +22,7 @@ class TaskBoardColumn < ActiveRecord::Base
     if include_subprojects
         subproject_ids = project.self_and_descendants.active.collect {|p| p.id}.flatten
     end
-    self.issue_statuses.order(:weight).each do |status|
+    self.issue_statuses.order('status_buckets.weight').each do |status|
       @column_statuses[status.id] = Array.new
       issues = Issue.select("issues.*, tbi.is_archived, tbi.#{order_column} as weight, tbi.issue_id") \
         .joins('LEFT OUTER JOIN task_board_issues AS tbi ON tbi.issue_id = issues.id') \
