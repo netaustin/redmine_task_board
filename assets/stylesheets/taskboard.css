@@ -12,6 +12,7 @@
   float: left;
   width: 250px;
   margin: 0 4px;
+  background-color: lightgray
 }
 
 .taskboard-pane h2, .taskboard-pane h3 {
@@ -31,16 +32,17 @@
 }
 
 .taskboard-pane ul {
-  border: solid 3px #eee;
   list-style-type: none;
   margin: 0 0 10px 0;
   padding: 6px 6px 0 6px;
   min-height: 50px;
+  border: solid 1px;
+  border-color: lightgray;
 }
 
 .taskboard-pane ul.empty {
   border: dashed 3px #eee;
-  background: #fff;
+  background: lightgray;
 }
 
 .taskboard-pane ul li.card {
@@ -52,6 +54,7 @@
   height: auto;
   white-space: normal;
   line-height: auto;
+  background-color: lightyellow
 }
 
 .taskboard-pane ul li.card.over-limit div.issue {
@@ -129,7 +132,6 @@
   position: absolute;
   top: 0;
   left: 0;
-  background: #dadada;
   padding: 4px;
 }
 
