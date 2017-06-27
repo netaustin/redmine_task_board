@@ -10,9 +10,10 @@
 
 .taskboard-pane {
   float: left;
-  width: 250px;
+  width: 15%;
   margin: 0 4px;
-  background-color: lightgray
+  background-color: lightgray;
+  border-radius: 1em
 }
 
 .taskboard-pane h2, .taskboard-pane h3 {
@@ -23,6 +24,7 @@
   color: #666;
   font-size: 14px;
   border-bottom: solid 1px #666;
+  text-align: center
 }
 
 .taskboard-pane h2 {
@@ -54,7 +56,8 @@
   height: auto;
   white-space: normal;
   line-height: auto;
-  background-color: lightyellow
+  background-color: lightyellow;
+  border-radius: 10px 3px
 }
 
 .taskboard-pane ul li.card.over-limit div.issue {
