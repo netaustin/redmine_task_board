@@ -29,6 +29,7 @@ class MyTaskboardController < ApplicationController
         .joins('INNER JOIN enumerations issue_priority ON issues.priority_id = issue_priority.id') \
         .where("assigned_to_id = ? AND issue_statuses.is_closed = false AND projects.status = 1", @user.id) \
         .order("weight ASC, issue_priority.position DESC")
+        
     @not_prioritized = Array.new
     @prioritized = Array.new
 

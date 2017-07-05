@@ -8,8 +8,8 @@
 
 <%= form_tag project_taskboard_columns_update_path(:project_id => @project.id), :method => 'put', :remote => true do %>
   <div class="status-bucket column">
-    <h5>Available Statuses</h5>
-    <p><em>Configure the taskboard columns by dragging statuses to them.</em></p>
+    <h5><%= translate(:task_board_available_status) %></h5>
+    <p><em><%= translate(:task_board_status_config_message) %></em></p>
     <ul class="buckets-wrapper status-holder">
       <% statuses.each do |status| %>
         <% if TaskBoardColumn.empty_status(@project.id, status.id) %>

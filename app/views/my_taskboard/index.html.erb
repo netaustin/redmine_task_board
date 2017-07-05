@@ -2,10 +2,10 @@
 
 <div id="taskboard-filters">
   <p>
-    <%= label_tag "priority", "Priority" %>
-    <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
-    <%= label_tag "project", "Project" %>
-    <%= select_tag("project", options_for_select([['Any', '0']] + Project.order(:name).where(:status => 1).all().select{|project| @user.allowed_to?(:log_time, project)}.collect{|p| [p.name, p.id] })) %>
+    <%= label_tag "priority", l(:task_board_priority) %>
+    <%= select_tag("priority", options_for_select([[l(:task_board_any), '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
+    <%= label_tag "project", l(:task_board_project) %>
+    <%= select_tag("project", options_for_select([[l(:task_board_any), '0']] + Project.order(:name).where(:status => 1).all().select{|project| @user.allowed_to?(:log_time, project)}.collect{|p| [p.name, p.id] })) %>
   </p>
 </div>
 

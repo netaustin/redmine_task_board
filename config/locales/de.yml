@@ -19,3 +19,13 @@ de:
   task_board_not_prioritized: Andere Tickets
   task_board_prioritized: Priorisierte Tickets
   label_task_board_include_subprojects: Unterprojekte inkludieren
+  task_board_priority: Priorität
+  task_board_project: Projekt
+  task_board_any: Alles
+  task_board_anyone: Alle
+  task_board_category: Kategorie
+  task_board_assignee: Zugewiesen an
+  task_board_available_status: Verfügbare Stati
+  task_board_status_config_message: Die Taskboard-Spalten durch herüberziehen der Stati konfigurieren.
+  task_board_my_board: Mein Task Board
+  task_board_title: Task Board

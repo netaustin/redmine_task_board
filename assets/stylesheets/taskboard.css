@@ -57,7 +57,8 @@
   white-space: normal;
   line-height: auto;
   background-color: lightyellow;
-  border-radius: 10px 3px
+  border-radius: 2px 15px 2px 2px;
+  box-shadow: 2px 2px 2px rgb(113, 113, 113);
 }
 
 .taskboard-pane ul li.card.over-limit div.issue {

@@ -18,3 +18,13 @@ en:
   task_board_not_prioritized: Other Issues
   task_board_prioritized: Prioritized Issues
   label_task_board_include_subprojects: Include subprojects
+  task_board_priority: Priority
+  task_board_project: Project
+  task_board_any: Any
+  task_board_anyone: Anyone
+  task_board_category: Category
+  task_board_assignee: Assigned to
+  task_board_available_status: Available Statuses
+  task_board_status_config_message: Configure the taskboard columns by dragging statuses to them.
+  task_board_my_board: My Task Board
+  task_board_title: Task Board

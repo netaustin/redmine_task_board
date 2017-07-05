@@ -2,20 +2,20 @@
 
 <div id="taskboard-filters">
   <p>
-    <%= label_tag "assignee", "Assigned to" %>
+    <%= label_tag "assignee", l(:task_board_assignee) %>
     <%
-      author_values = [['Anyone', '0']]
+      author_values = [[l(:task_board_anyone), '0']]
       author_values << ["<< #{l(:label_me)} >>", User.current.id] if User.current.logged?
       author_values += @project.members.collect { |m| [ m.name, m.user.id ] }
     %>
     <%= select_tag("assignee", options_for_select(author_values)) %>
-    <%= label_tag "priority", "Priority" %>
-    <%= select_tag("priority", options_for_select([['Any', '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
-    <%= label_tag "category", "Category" %>
-    <%= select_tag("category", options_for_select([['Any', '0']] + @categories.collect { |m| [ m.name, m.id ] } )) %>
+    <%= label_tag "priority", l(:task_board_priority) %>
+    <%= select_tag("priority", options_for_select([[l(:task_board_any), '0']] + IssuePriority.all.collect { |m| [ m.name, m.id ] } )) %>
+    <%= label_tag "category", l(:task_board_category) %>
+    <%= select_tag("category", options_for_select([[l(:task_board_any), '0']] + @categories.collect { |m| [ m.name, m.id ] } )) %>
     <% if @include_subprojects %>
-      <%= label_tag "project", "Project" %>
-      <%= select_tag("project", options_for_select([['Any', '0']] + @project.children.active.collect { |m| [ m.name, m.id ] } )) %>
+      <%= label_tag "project", l(:task_board_project) %>
+      <%= select_tag("project", options_for_select([[l(:task_board_any), '0']] + @project.children.active.collect { |m| [ m.name, m.id ] } )) %>
     <% end %>
   </p>
 </div>
