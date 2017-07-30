@@ -12,8 +12,8 @@
   float: left;
   width: 15%;
   margin: 0 4px;
-  background-color: lightgray;
-  border-radius: 1em
+  background-color: #f6ecf3;
+  border-radius: 0.3em
 }
 
 .taskboard-pane h2, .taskboard-pane h3 {
@@ -24,13 +24,16 @@
   color: #666;
   font-size: 14px;
   border-bottom: solid 1px #666;
-  text-align: center
+  text-align: center;
+  font-style: italic;
 }
 
 .taskboard-pane h2 {
   font-size: 18px;
   text-align: center;
   background-color: transparent;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .taskboard-pane ul {
@@ -38,12 +41,12 @@
   margin: 0 0 10px 0;
   padding: 6px 6px 0 6px;
   min-height: 50px;
-  border: solid 1px;
+  border: solid 0px;
   border-color: lightgray;
 }
 
 .taskboard-pane ul.empty {
-  border: dashed 3px #eee;
+  border: dashed 2px #885183;
   background: lightgray;
 }
 
@@ -56,7 +59,7 @@
   height: auto;
   white-space: normal;
   line-height: auto;
-  background-color: lightyellow;
+  background-color: #FDF0D2;
   border-radius: 2px 15px 2px 2px;
   box-shadow: 2px 2px 2px rgb(113, 113, 113);
 }
